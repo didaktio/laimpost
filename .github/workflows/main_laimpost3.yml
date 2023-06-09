@@ -28,7 +28,6 @@ jobs:
   build_api:
     needs: check_changes
     runs-on: ubuntu-latest
-    # if: ${{ needs.check_changes.outputs.changed == 'true' && contains(github.event.head_commit.modified, '.py') || contains(github.event.head_commit.modified, 'requirements.txt') }}
     steps:
       - uses: actions/checkout@v3
 
@@ -81,7 +80,6 @@ jobs:
   build_and_deploy_app:
     needs: check_changes
     runs-on: ubuntu-latest
-    # if: ${{ needs.check_changes.outputs.changed == 'true' && contains(steps.check_changes.outputs.changed, 'laimpost_react/') }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
