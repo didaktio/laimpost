@@ -1,0 +1,19 @@
+#laim-page-home-link {
+  font-size: 12px;
+  text-align: center;
+}
+
+#laim-page-home-link {
+  text-align: center;
+  margin-block-start: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  #laim-page-about {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+}

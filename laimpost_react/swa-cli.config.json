@@ -1,0 +1,15 @@
+{
+  "$schema": "https://aka.ms/azure/static-web-apps-cli/schema",
+  "configurations": {
+    "laimpost": {
+      "appName": "laimpost",
+      "appLocation": ".",
+      "outputLocation": "build",
+      "appBuildCommand": "npm run build",
+      "run": "npm start",
+      "appDevserverUrl": "http://localhost:3000",
+      "subscriptionId": "57f53f2c-449c-4af0-a836-4d805b9fe1a6",
+      "resourceGroup": "laim-group"
+    }
+  }
+}

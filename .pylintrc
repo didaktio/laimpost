@@ -1,0 +1,4 @@
+[MESSAGES CONTROL]
+disable=
+    multiple-imports,
+    missing-module-docstring

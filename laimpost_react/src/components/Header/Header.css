@@ -1,0 +1,18 @@
+#laim-header {
+    background-color: whitesmoke;
+    height: 60px;
+}
+
+#laim-logo {
+    margin-inline: auto;
+    margin-block-start: 0;
+    width: fit-content;
+    font-family: monospace;
+    font-size: 42px;
+    font-weight: 300;
+    cursor: pointer;
+}
+
+#laim-logo-text-ai {
+    font-weight: 500;
+}

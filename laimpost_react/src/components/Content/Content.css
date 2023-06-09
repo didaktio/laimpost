@@ -1,0 +1,12 @@
+#laimcontent {
+  flex: 1;
+  padding-block: 16px;
+  padding-inline: 16px;
+}
+
+@media screen and (min-width: 600px) {
+  #laimcontent {
+    padding-block: 12px;
+    padding-inline: 32px;
+  }
+}
