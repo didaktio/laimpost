@@ -110,7 +110,7 @@ jobs:
       - name: Build
         run: npm run build --prefix laimpost_react
         env:
-          REACT_APP_API_ENDPOINT: ${{ secrets.REACT_APP_API_ENDPOINT }}
+          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
 
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
