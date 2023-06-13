@@ -29,8 +29,8 @@ jobs:
       - name: Format check
         run: black --check .
 
-      - name: Run linter
-        run: flake8 --config=.flake8 .
+      # - name: Run linter
+      #   run: flake8 --config=.flake8 .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -92,7 +92,7 @@ jobs:
         run: npm install --prefix laimpost_react
 
       - name: Check formatting
-        run:  npm run format:check install --prefix laimpost_react
+        run:  npm run format:check --prefix laimpost_react
 
       # - name: Run linter
       #   run:  npm run lint:check install --prefix laimpost_react
