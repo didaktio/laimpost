@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom';
 
-import './Footer.css';
+import styles from './Footer.module.scss';
 
 export default () => {
   return (
-    <div id="laim-footer">
-      <div id="laim-footer-buttons">
-        <Link className="laim-button" to="/contact">
+    <div>
+      <div id={styles.laimFooterButtons}>
+        <Link className="laimButton" to="/contact">
           Contact
         </Link>
-        <Link className="laim-button" to="/about">
+        <Link className="laimButton" to="/about">
           About
         </Link>
       </div>

@@ -1,3 +1,4 @@
 export const enum APIPath {
-    Articles = "/articles",
+  Articles = '/articles',
+  Comments = '/comments',
 }

@@ -1,37 +1,45 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import './index.css';
-import { Home } from './pages/components/Home';
-import { Articles } from './pages/components/Article';
-import { About } from './pages/components/About/About';
-import { Contact } from './pages/components/Contact/Contact';
+import { HomePage } from './pages/components/HomePage/HomePage';
+import { ArticlePage } from './pages/components/ArticlePage/ArticlePage';
+import { AboutPage } from './pages/components/AboutPage/AboutPage';
+import { ContactPage } from './pages/components/ContactPage/ContactPage';
 import reportWebVitals from './reportWebVitals';
+import { HelmetProvider } from 'react-helmet-async';
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
+    element: <HomePage />,
   },
   {
     path: '/about',
-    element: <About />,
+    element: <AboutPage />,
   },
   {
     path: '/contact',
-    element: <Contact />,
+    element: <ContactPage />,
   },
   {
-    path: '/:articleId',
-    element: <Articles />,
+    path: '/:slug',
+    element: <ArticlePage />,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('laimroot') as HTMLElement);
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <RouterProvider router={router} />
+      </HelmetProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

@@ -1,6 +1,8 @@
+from django.utils.text import slugify
 from django.db import models
 import uuid
 import time
+
 
 def gen_id():
     timestamp = int(time.time() * 1000)
@@ -8,8 +10,8 @@ def gen_id():
     unique_id = str(timestamp) + random
     return unique_id[:10]
 
+
 class Article(models.Model):
-    id = models.CharField(max_length=10, primary_key=True, default=gen_id, editable=False)
     title = models.CharField(max_length=200)
     body = models.TextField()
     image_src = models.CharField(max_length=200)
@@ -17,19 +19,25 @@ class Article(models.Model):
     author_name = models.CharField(max_length=200)
     author_image_src = models.CharField(max_length=200)
     published_date = models.DateTimeField(auto_now_add=True)
-    original_article = models.JSONField(null=True, blank=False)
+    original_article = models.JSONField(blank=False, null=True)
+    slug = models.SlugField(max_length=200, unique=True)
 
     def __str__(self):
         return str(self.title)
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+
 class Comment(models.Model):
-    id = models.UUIDField(max_length=10, primary_key=True, default=gen_id, editable=False)
-    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
-    comment = models.TextField()
-    author_name = models.CharField(max_length=200)
-    author_image_src = models.CharField(max_length=200)
+    user_id = models.CharField(max_length=200)
+    article = models.ForeignKey(
+        Article, on_delete=models.CASCADE, related_name="comments"
+    )
+    body = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.comment)
-
+        return str(self.body)

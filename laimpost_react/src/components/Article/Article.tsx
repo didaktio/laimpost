@@ -1,25 +1,44 @@
-import './Article.css';
-import type { Article as ArticleProps } from './Article.types';
+import { Link } from 'react-router-dom';
+import { Comments } from '../Comments/Comments';
+
+import styles from './Article.module.scss';
+import type { ArticleProps } from './Article.types';
 
 export const Article = ({
-  title,
-  description,
-  body,
-  image_src,
-  image_alt,
-  author_image_src,
-  author_name,
-  original_article,
+  article: { title, description, body, image_src, image_alt, original_article, comments, slug },
+  withComments,
+  truncate,
+  onImageClick,
 }: ArticleProps) => (
-  <div className="laim-article">
-    <img className="laim-article-image" loading="eager" src={image_src} alt={image_alt} />
+  <div className={styles.laimArticle}>
+    <img
+      className={`${styles.laimArticleImage}${onImageClick ? ` laimPointer` : ''}`}
+      loading="eager"
+      src={image_src}
+      alt={image_alt}
+      onClick={onImageClick}
+    />
     <h2>{title}</h2>
     <p>{description}</p>
-    <p>{body}</p>
+    <p>
+      {truncate ? (
+        <>
+          {body.substring(0, 748)}... <Link to={slug}>Read on {'->'}</Link>
+        </>
+      ) : (
+        body
+      )}
+    </p>
     {original_article && (
       <>
-        <div className="laim-article-original-url">Original Article: {original_article.url}</div>
+        <div className={styles.laimArticleOriginalUrl}>
+          A different take:{' '}
+          <a href={original_article.url} target="_blank" rel="noopener">
+            {original_article.url}
+          </a>
+        </div>
       </>
     )}
+    {withComments && <Comments comments={comments} />}
   </div>
 );

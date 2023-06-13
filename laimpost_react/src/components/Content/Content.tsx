@@ -1,5 +1,7 @@
 import type { ContentProps } from './Content.types';
 
-import './Content.css';
+import styles from './Content.module.scss';
 
-export const Content = ({ children }: ContentProps) => <main id="laimcontent">{children}</main>;
+export const Content = ({ children }: ContentProps) => (
+  <main id={styles.laimcontent}>{children}</main>
+);
