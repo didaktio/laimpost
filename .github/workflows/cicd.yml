@@ -23,14 +23,14 @@ jobs:
           python -m venv venv
           source venv/bin/activate
 
+      - name: Install deps
+        run: pip install -r requirements.txt
+
       - name: Format check
         run: black --check .
 
       - name: Run linter
         run: flake8 --config=.flake8 .
-
-      - name: Install deps
-        run: pip install -r requirements.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
