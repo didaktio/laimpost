@@ -8,6 +8,7 @@ on:
 
 jobs:
   prepare_api:
+    if: ${{!contains(github.event.head_commit.message, '[ci skip]')}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -63,6 +64,7 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_104C845506804B03BD2C008C8E1D19AB }}
 
   prepare_and_deploy_app:
+    if: ${{!contains(github.event.head_commit.message, '[ci skip]')}}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -77,7 +79,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/laimpost_react/package-lock.json') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/laimpost.com/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
@@ -89,21 +91,21 @@ jobs:
         run: npm list
 
       - name: Install dependencies
-        run: npm install --prefix laimpost_react
+        run: npm install --prefix laimpost.com
 
       - name: Check formatting
-        run:  npm run format:check --prefix laimpost_react
+        run: npm run format:check --prefix laimpost.com
 
       # - name: Run linter
-      #   run:  npm run lint:check install --prefix laimpost_react
+      #   run:  npm run lint:check install --prefix laimpost.com
 
       # - name: Run Unit Tests
-      #   run:  npm run test install --prefix laimpost_react
+      #   run:  npm run test install --prefix laimpost.com
 
       - name: Build
-        run: npm run build --prefix laimpost_react
+        run: npm run build --prefix laimpost.com
         env:
-          REACT_APP_API_BASE_URL: ${{ secrets.REACT_APP_API_BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
@@ -111,17 +113,17 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
-          app_location: 'laimpost_react/build'
+          app_location: 'laimpost.com/build'
           output_location: ''
           skip_app_build: true
           deployment_environment: ${{github.ref == 'refs/heads/main' && 'Production' || 'dev'}}
 
   create_version:
     needs: [deploy_api, prepare_and_deploy_app]
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Configure git user
         run: |
@@ -142,3 +144,32 @@ jobs:
 
       - name: Push tag
         run: git push origin ${{ steps.create-tag.outputs.version }}
+
+  check_pull_request:
+    needs: [deploy_api, prepare_and_deploy_app]
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check Pull Request
+        id: check_pr
+        uses: vsoch/pull-request-action@f9e7f419d6b44935f6b0458fad17077269caaf71
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PULL_REQUEST_BRANCH: main
+          PULL_REQUEST_FROM_BRANCH: dev
+          PULL_REQUEST_UPDATE: true
+          PULL_REQUEST_TITLE: Merge dev into main
+          PUll_REQUEST_BODY: Automated pull request for merging dev into main. It's best not to update this description because it will be overwritten when new commits are pushed.
+          PASS_ON_ERROR: true
+
+      - name: Update Pull Request
+        if: ${{ steps.check_pr.outputs.pull_request_url }}
+        run: |
+          curl -u username:${{ secrets.GITHUB_TOKEN }} -X PATCH -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository_owner}}/${{ github.event.repository.name }}/pulls/${{ steps.check_pr.outputs.pull_request_number }} \
+           -d '{"body": "Merge _dev_ branch into _main_. **A new release will be published if qualifying changes have been made**. It's best not to edit this description because it will be overwritten when new commits are pushed. <br> <br> <br> '"$(curl -u username:${{ secrets.GITHUB_TOKEN }}  -H 'Accept: application/vnd.github.v3+json' \
+          https://api.github.com/repos/${{ github.repository_owner}}/${{ github.event.repository.name }}/pulls/${{ steps.check_pr.outputs.pull_request_number }}/commits \
+           | grep message | sed 's/^[ \t]*//;s/[ \t]*$//;s/[",]//g;s/message: //' |  sed -z 's/\n/\\n/g')"'"}'
+          curl -u username:${{ secrets.GITHUB_TOKEN }} -X POST -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/pulls/${{ steps.check_pr.outputs.pull_request_number }}/requested_reviewers -d '{"reviewers": ["didaktio"]}'
