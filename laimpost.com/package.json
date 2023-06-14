@@ -1,0 +1,33 @@
+{
+  "name": "laimpost",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "deploy": "swa deploy",
+    "lint": "eslint --config .eslintrc.json --cache --fix --ext .ts,.tsx,.js app/",
+    "lint:check": "eslint --config .eslintrc.json --cache --ext .ts,.tsx,.js app/",
+    "format": "prettier --config .prettierrc.js --write \"**/*.{ts,tsx,js,jsx,json,yml,css,scss}\"",
+    "format:check": "prettier --config .prettierrc.js --check \"**/*.{ts,tsx,js,jsx,json,yml,css,scss}\"",
+    "serve:build": "node server"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^4.29.13",
+    "next": "13.4.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.3.1",
+    "@types/react": "18.2.12",
+    "@types/react-dom": "18.2.5",
+    "eslint": "8.42.0",
+    "eslint-config-next": "13.4.5",
+    "koa": "^2.14.2",
+    "prettier": "^2.8.8",
+    "sass": "^1.63.4",
+    "typescript": "5.1.3"
+  }
+}

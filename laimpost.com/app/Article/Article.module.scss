@@ -1,0 +1,22 @@
+.laimArticle {
+  margin-block-start: 16px;
+}
+
+.laimArticleImageContainer {
+  max-width: 50%;
+}
+
+@media screen and (max-width: 600px) {
+  .laimArticleImageContainer {
+    max-width: 100%;
+  }
+}
+
+.laimArticleOriginalUrl {
+  color: grey;
+  font-size: 10px;
+
+  a {
+    color: grey;
+  }
+}
