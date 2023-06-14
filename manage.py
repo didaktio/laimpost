@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 
 
 def main():
-    if 'WEBSITE_HOSTNAME' in os.environ:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'laimpost.settings.production')
+    if "WEBSITE_HOSTNAME" in os.environ:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.production")
     else:
         load_dotenv()
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'laimpost.settings.base')
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.base")
 
     try:
         from django.core.management import execute_from_command_line
@@ -24,5 +24,5 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

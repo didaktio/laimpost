@@ -1,3 +1,7 @@
 * {
     font-family: monospace;
 }
+
+.navbar-brand {
+    display: none;
+}

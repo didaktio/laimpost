@@ -1,32 +1,13 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
-
-name: Deploy
+name: Continuous Integration / Continuous Delivery
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
+      - dev
 
 jobs:
-  check_changes:
-    runs-on: ubuntu-latest
-    outputs:
-      changed: ${{ steps.changes.outputs.changed }}
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Check for changes
-        id: changes
-        run: |
-          echo ::set-output name=changed::$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }})
-
-  build_api:
-    needs: check_changes
+  prepare_api:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,7 +26,11 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+      - name: Format check
+        run: black --check .
+
+      # - name: Run linter
+      #   run: flake8 --config=.flake8 .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -56,7 +41,7 @@ jobs:
             !venv/
 
   deploy_api:
-    needs: build_api
+    needs: prepare_api
     runs-on: ubuntu-latest
     environment:
       name: Production
@@ -77,8 +62,7 @@ jobs:
           slot-name: Production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_104C845506804B03BD2C008C8E1D19AB }}
 
-  build_and_deploy_app:
-    needs: check_changes
+  prepare_and_deploy_app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -107,6 +91,15 @@ jobs:
       - name: Install dependencies
         run: npm install --prefix laimpost_react
 
+      - name: Check formatting
+        run:  npm run format:check --prefix laimpost_react
+
+      # - name: Run linter
+      #   run:  npm run lint:check install --prefix laimpost_react
+
+      # - name: Run Unit Tests
+      #   run:  npm run test install --prefix laimpost_react
+
       - name: Build
         run: npm run build --prefix laimpost_react
         env:
@@ -121,3 +114,31 @@ jobs:
           app_location: 'laimpost_react/build'
           output_location: ''
           skip_app_build: true
+          deployment_environment: ${{github.ref == 'refs/heads/main' && 'Production' || 'dev'}}
+
+  create_version:
+    needs: [deploy_api, prepare_and_deploy_app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Configure git user
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Create version tag
+        id: create-tag
+        run: |
+          DATE=$(date +%Y%m%d)
+          BUILD=$(git tag -l "$DATE*" | wc -l | xargs printf "%03d")
+          VERSION="$DATE.$BUILD"
+          git tag $VERSION
+          echo "::set-output name=version::$VERSION"
+
+      - name: Push tag
+        run: git push origin ${{ steps.create-tag.outputs.version }}

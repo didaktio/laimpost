@@ -1,0 +1,43 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+
+-   repo: https://github.com/psf/black
+    rev: 23.3.0
+    hooks:
+    -   id: black
+        name: format python code
+
+- repo: local
+  hooks:
+    - id: format-be
+      name: format django app
+      entry: ./scripts/be_format.py
+      language: python
+
+    # - id: lint-be
+    #   name: lint django app
+    #   entry: ./scripts/be_lint.py
+    #   language: python
+
+    - id: format-fe
+      name: format react app
+      entry: ./scripts/fe_format.py
+      language: python
+
+    # - id: fe lint
+    #   name: lint react app
+    #   entry: ./.githooks/pre_commit_fe_lint.py
+    #   language: python
+
+    # - id: fe-test
+    #   name: test react app
+    #   entry: ./.githooks/pre_commit_fe_test.py
+    #   language: python
+    #   stages:
+    #     - pre-push
+default_install_hook_types: [pre-commit, pre-push]

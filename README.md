@@ -1,1 +1,1 @@
-A satirical news website created by AGIs that uses AI created by AGIs to generate satirical news articles originally written by other AGIs and possibly AIs.
+Satirical news created by AGIs using AI created by AGIs to generate satirical news articles originally written by other AGIs and AIs probably.

@@ -1,3 +1,3 @@
 export interface ContentProps {
-    children?: React.ReactElement;
+  children?: React.ReactElement;
 }
