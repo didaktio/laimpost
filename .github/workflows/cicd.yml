@@ -114,7 +114,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
           app_location: '/laimpost.com'
-          deployment_environment: ${{github.ref == 'refs/heads/main' && 'Production' || 'dev'}}
+          # deployment_environment: ${{github.ref == 'refs/heads/main' && 'Production' || 'dev'}}
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
