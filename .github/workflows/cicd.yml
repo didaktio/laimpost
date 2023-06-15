@@ -7,8 +7,29 @@ on:
       - dev
 
 jobs:
-  prepare_api:
+  check_deploy_reqs:
     if: ${{!contains(github.event.head_commit.message, '[ci skip]')}}
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.check.outputs.api }}
+      app: ${{ steps.check.outputs.app }}
+      cicd: ${{ steps.check.outputs.cicd }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Check if deployment is required
+        id: check
+        run: |
+          python scripts/check_deploy_reqs.py
+          grep -q "API_CHANGED=True" component_changes.txt && echo "api=true" >> "$GITHUB_OUTPUT" || echo "api=''" >> "$GITHUB_OUTPUT"
+          grep -q "APP_CHANGED=True" component_changes.txt && echo "app=true" >> "$GITHUB_OUTPUT" || echo "app=''" >> "$GITHUB_OUTPUT"
+          grep -q "CICD_CHANGED=True" component_changes.txt && echo "cicd=true" >> "$GITHUB_OUTPUT" || echo "cicd=''" >> "$GITHUB_OUTPUT"
+
+  prepare_api:
+    needs: check_deploy_reqs
+    if: ${{needs.check_deploy_reqs.outputs.api || needs.check_deploy_reqs.outputs.cicd }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -64,7 +85,8 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_104C845506804B03BD2C008C8E1D19AB }}
 
   prepare_and_deploy_app:
-    if: ${{!contains(github.event.head_commit.message, '[ci skip]')}}
+    needs: check_deploy_reqs
+    if: ${{needs.check_deploy_reqs.outputs.app || needs.check_deploy_reqs.outputs.cicd }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
