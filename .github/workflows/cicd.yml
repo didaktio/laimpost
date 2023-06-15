@@ -18,7 +18,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.12
+          allow-prereleases: true
       - name: Check if deployment is required
         id: check
         run: |
@@ -37,7 +38,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: 3.12
+          allow-prereleases: true
           cache: pip
 
       - name: Create and start venv
@@ -92,7 +94,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
 
       - name: Cache node modules
         id: cache-npm
@@ -183,7 +185,7 @@ jobs:
           PULL_REQUEST_FROM_BRANCH: dev
           PULL_REQUEST_UPDATE: true
           PULL_REQUEST_TITLE: Merge dev into main
-          PUll_REQUEST_BODY: Automated pull request for merging dev into main. It's best not to update this description because it will be overwritten when new commits are pushed.
+          PUll_REQUEST_BODY: Automated pull request for merging dev into main. It is best not to update this description because it will be overwritten when new commits are pushed.
           PASS_ON_ERROR: true
 
       - name: Update Pull Request
