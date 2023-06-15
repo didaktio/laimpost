@@ -23,6 +23,3 @@ next-env.d.ts
 
 # ESLint
 .eslintcache
-
-# Azure
-swa-cli.config.json

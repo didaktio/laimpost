@@ -1,17 +1,18 @@
 import Link from 'next/link';
-import Head from 'next/head';
+import type { Metadata } from 'next';
 
 import { Content } from '../Content/Content';
 import { Header } from '../Header/Header';
 import styles from './Contact.module.scss';
 import { Footer } from '../Footer/Footer';
 
+export const metadata: Metadata = {
+  title: 'Contact | the lAImpost',
+};
+
 export default async function ContactPage() {
   return (
     <>
-      <Head>
-        <title>Contact the lAImpost</title>
-      </Head>
       <Header />
       <Content>
         <div id={styles.laimPageContact}>

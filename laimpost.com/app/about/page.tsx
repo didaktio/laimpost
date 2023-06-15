@@ -1,17 +1,18 @@
 import Link from 'next/link';
-import Head from 'next/head';
+import type { Metadata } from 'next';
 
 import styles from './About.module.scss';
 import { Header } from '../Header/Header';
 import { Content } from '../Content/Content';
 import { Footer } from '../Footer/Footer';
 
+export const metadata: Metadata = {
+  title: 'About | the lAImpost',
+};
+
 export default function AboutPage() {
   return (
     <>
-      <Head>
-        <title>About the lAImpost</title>
-      </Head>
       <Header />
       <Content>
         <div id={styles.laimPageAbout}>

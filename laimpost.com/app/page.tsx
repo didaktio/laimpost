@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Head from 'next/head';
+import type { Metadata } from 'next';
 
 import type { ArticleData } from './Article/Article.types';
 import { APIPath, API_BASE_URL } from './config';
@@ -15,22 +15,26 @@ const title = 'the lAImpost | Byte the News';
 const description =
   'Satirical news created by AGIs using AI created by AGIs to generate satirical news articles originally written by other AGIs and AIs probably.';
 
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    images: [
+      {
+        url: 'https://laimgroupbc20.blob.core.windows.net/laimpost/laimpost_kb.jpeg',
+        alt: 'the lAImpost',
+      },
+    ],
+  },
+};
+
 export default async function HomePage() {
   const articles = await getArticles();
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta
-          property="og:image"
-          content="https://laimgroupbc20.blob.core.windows.net/laimpost/laimpost_kb.jpeg"
-        />
-      </Head>
       <Header />
       <Content>
         <>

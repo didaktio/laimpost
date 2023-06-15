@@ -1,4 +1,8 @@
-export interface PageProps<P = Record<string, string>, S = Record<string, string>> {
-  params: P;
-  searchParams: S;
+interface PageRouteMap {
+  Article: 'slug';
+}
+
+export interface PageProps<R extends keyof PageRouteMap> {
+  params: Record<PageRouteMap[R], string>;
+  searchParams: { [key: string]: string | string[] | undefined };
 }
