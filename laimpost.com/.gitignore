@@ -1,0 +1,25 @@
+# Noooooo de modules
+/node_modules
+
+# Next.js
+/.next/
+/out/
+
+# Prod build
+/build
+
+# Misc
+.DS_Store
+
+# debugging logs
+npm-debug.log*
+
+# env files
+.env
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# ESLint
+.eslintcache
