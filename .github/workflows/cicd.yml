@@ -23,7 +23,10 @@ jobs:
       - name: Check if deployment is required
         id: check
         run: |
-          python scripts/check_deploy_reqs.py
+          git diff --name-only ${{ github.event.before }} ${{ github.event.after }} >> changed_files.txt
+          cat changed_files.txt
+          echo "-------"
+          python .github/scripts/check_deploy_reqs.py
           grep -q "API_CHANGED=True" component_changes.txt && echo "api=true" >> "$GITHUB_OUTPUT" || echo "api=''" >> "$GITHUB_OUTPUT"
           grep -q "APP_CHANGED=True" component_changes.txt && echo "app=true" >> "$GITHUB_OUTPUT" || echo "app=''" >> "$GITHUB_OUTPUT"
           grep -q "CICD_CHANGED=True" component_changes.txt && echo "cicd=true" >> "$GITHUB_OUTPUT" || echo "cicd=''" >> "$GITHUB_OUTPUT"
