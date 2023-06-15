@@ -102,10 +102,10 @@ jobs:
       # - name: Run Unit Tests
       #   run:  npm run test install --prefix laimpost.com
 
-      - name: Build
-        run: npm run build --prefix laimpost.com
-        env:
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      # - name: Build
+      #   run: npm run build --prefix laimpost.com
+      #   env:
+      #     API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
       - name: Deploy
         uses: Azure/static-web-apps-deploy@v1
@@ -113,9 +113,10 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
-          app_location: 'laimpost.com/.next'
-          skip_app_build: true
+          app_location: '/laimpost.com'
           deployment_environment: ${{github.ref == 'refs/heads/main' && 'Production' || 'dev'}}
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
   create_version:
     needs: [deploy_api, prepare_and_deploy_app]
