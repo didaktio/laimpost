@@ -6,7 +6,6 @@
     "serve": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "swa deploy",
     "lint": "eslint --config .eslintrc.json --cache --fix --ext .ts,.tsx,.js app/",
     "lint:check": "eslint --config .eslintrc.json --cache --ext .ts,.tsx,.js app/",
     "format": "prettier --config .prettierrc.js --write \"**/*.{ts,tsx,js,jsx,json,yml,css,scss}\"",
