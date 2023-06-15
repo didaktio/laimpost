@@ -15,7 +15,7 @@ app_include = [
     "*.png",
 ]
 files = (
-    subprocess.check_output(["git", "diff", "--name-only", "--cached"])
+    subprocess.check_output(["git", "diff", "--name-only", "HEAD^"])
     .decode()
     .splitlines()
 )

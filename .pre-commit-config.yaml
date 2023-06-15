@@ -29,11 +29,6 @@ repos:
       entry: ./scripts/fe_format.py
       language: python
 
-    - id: check-deploy-reqs
-      name: check deployment requirements
-      entry: ./scripts/check_deploy_reqs.py
-      language: python
-
     # - id: fe lint
     #   name: lint react app
     #   entry: ./.githooks/pre_commit_fe_lint.py

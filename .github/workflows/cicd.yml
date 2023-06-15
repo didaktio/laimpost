@@ -30,7 +30,7 @@ jobs:
 
   prepare_api:
     needs: check_deploy_reqs
-    if: ${{needs.check_deploy_reqs.outputs.api || needs.check_deploy_reqs.outputs.cicd }}
+    if: ${{needs.check_deploy_reqs.outputs.api == 'true' || needs.check_deploy_reqs.outputs.cicd == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -88,7 +88,7 @@ jobs:
 
   prepare_and_deploy_app:
     needs: check_deploy_reqs
-    if: ${{needs.check_deploy_reqs.outputs.app || needs.check_deploy_reqs.outputs.cicd }}
+    if: ${{needs.check_deploy_reqs.outputs.app == 'true' || needs.check_deploy_reqs.outputs.cicd == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
