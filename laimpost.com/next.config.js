@@ -2,13 +2,6 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  // experimental: {
-  //   turbotrace: {
-  //     logAll: true,
-  //     memoryLimit: process.env.CI ? 6000 : 12000,
-  //     cont
-  //   }
-  // },
   devIndicators: {
     buildActivity: true,
   },
