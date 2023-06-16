@@ -1,14 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'standalone',
+  output: 'standalone',
   reactStrictMode: true,
+  // experimental: {
+  //   turbotrace: {
+  //     logAll: true,
+  //     memoryLimit: process.env.CI ? 6000 : 12000,
+  //     cont
+  //   }
+  // },
+  devIndicators: {
+    buildActivity: true,
+  },
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'laimgroupbc20.blob.core.windows.net',
-        // port: '',
-        // pathname: '/account123/**',
       },
     ],
   },
