@@ -3,4 +3,7 @@
 .env
 **/__pycache__/
 local
+.github/.act
+bin
 component_changes.txt
+changed_files.txt

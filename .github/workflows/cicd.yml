@@ -16,7 +16,10 @@ jobs:
       cicd: ${{ steps.check.outputs.cicd }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
       - uses: actions/setup-python@v4
+        if: ${{ !env.ACT }}
         with:
           python-version: 3.12
           allow-prereleases: true
@@ -26,7 +29,7 @@ jobs:
           git diff --name-only ${{ github.event.before }} ${{ github.event.after }} >> changed_files.txt
           cat changed_files.txt
           echo "-------"
-          python .github/scripts/check_deploy_reqs.py
+          python .github/scripts/check_deploy_reqs.py &&
           grep -q "API_CHANGED=True" component_changes.txt && echo "api=true" >> "$GITHUB_OUTPUT" || echo "api=''" >> "$GITHUB_OUTPUT"
           grep -q "APP_CHANGED=True" component_changes.txt && echo "app=true" >> "$GITHUB_OUTPUT" || echo "app=''" >> "$GITHUB_OUTPUT"
           grep -q "CICD_CHANGED=True" component_changes.txt && echo "cicd=true" >> "$GITHUB_OUTPUT" || echo "cicd=''" >> "$GITHUB_OUTPUT"
@@ -39,6 +42,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up Python
+        if: ${{ !env.ACT }}
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
@@ -147,7 +151,7 @@ jobs:
 
   create_version:
     needs: [deploy_api, prepare_and_deploy_app]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && !env.ACT
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -174,7 +178,7 @@ jobs:
 
   check_pull_request:
     needs: [deploy_api, prepare_and_deploy_app]
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/dev' && !env.ACT
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
