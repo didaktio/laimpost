@@ -1,6 +1,5 @@
 asgiref==3.6.0
 astroid==2.15.5
-asyncio==3.4.3
 black==23.3.0
 certifi==2023.5.7
 cfgv==3.3.1
