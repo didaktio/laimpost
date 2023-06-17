@@ -2,14 +2,20 @@ import * as React from 'react';
 import type { Metadata } from 'next';
 
 import type { ArticleData } from './Article/Article.types';
-import { APIPath, API_BASE_URL } from './config';
+import { APICacheTag, APIPath, API_BASE_URL } from './config';
 import { Content } from './Content/Content';
 import { Header } from './Header/Header';
 import { Article } from './Article/Article';
 import { Footer } from './Footer/Footer';
 
 const getArticles = async (): Promise<ArticleData[]> =>
-  (await fetch(`${API_BASE_URL}${APIPath.Articles}?format=json`)).json();
+  (
+    await fetch(`${API_BASE_URL}${APIPath.Articles}?format=json`, {
+      next: {
+        tags: [APICacheTag.Articles],
+      },
+    })
+  ).json();
 
 const title = 'the lAImpost | Byte the News';
 const description =

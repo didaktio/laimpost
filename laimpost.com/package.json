@@ -4,19 +4,22 @@
   "private": true,
   "scripts": {
     "serve": "next dev",
-    "build": "next build",
+    "build": "next build && cp -a .next/static .next/standalone/.next",
     "start": "next start",
     "lint": "eslint --config .eslintrc.json --cache --fix --ext .ts,.tsx,.js app/",
     "lint:check": "eslint --config .eslintrc.json --cache --ext .ts,.tsx,.js app/",
     "format": "prettier --config .prettierrc.js --write \"**/*.{ts,tsx,js,jsx,json,yml,css,scss}\"",
     "format:check": "prettier --config .prettierrc.js --check \"**/*.{ts,tsx,js,jsx,json,yml,css,scss}\"",
-    "serve:build": "node server"
+    "serve:build": "node .next/standalone/server.js",
+    "build-and-serve": "npm run build && npm run serve:build"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.29.13",
+    "limiter": "^2.1.0",
     "next": "13.4.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sharp": "^0.32.1"
   },
   "devDependencies": {
     "@types/node": "20.3.1",

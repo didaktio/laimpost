@@ -34,7 +34,13 @@ export const generateMetadata = async ({
 };
 
 const getArticle = async (id: string): Promise<ArticleData> =>
-  (await fetch(`${API_BASE_URL}${APIPath.Articles}/${id}?format=json`)).json();
+  (
+    await fetch(`${API_BASE_URL}${APIPath.Articles}/${id}?format=json`, {
+      next: {
+        tags: [id],
+      },
+    })
+  ).json();
 
 export default async function ArticlePage({ params: { slug } }: PageProps<'Article'>) {
   const article = await getArticle(slug);
