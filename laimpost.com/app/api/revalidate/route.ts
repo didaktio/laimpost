@@ -3,7 +3,7 @@ import { revalidateTag } from 'next/cache';
 import { revalidateLimiter } from '../limiter';
 import { API_ALLOWED_ORIGIN } from '@/app/config';
 
-export const baseHeaders = {
+const baseHeaders = {
   'Access-Control-Allow-Origin': API_ALLOWED_ORIGIN,
 };
 
