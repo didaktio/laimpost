@@ -136,6 +136,9 @@ jobs:
 
       - name: Build
         run: npm run build --prefix laimpost.com
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
 
       - name: Deploy to GCP (Firebase)
         uses: FirebaseExtended/action-hosting-deploy@v0
