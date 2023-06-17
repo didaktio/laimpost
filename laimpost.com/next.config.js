@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  ...(process.env.CLOUD_PROVIDER === 'AZURE'
+  ...(process.env.NEXT_OUTPUT
     ? {
-        output: 'standalone',
+        output: process.env.NEXT_OUTPUT,
       }
     : false),
   reactStrictMode: true,
