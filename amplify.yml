@@ -1,0 +1,16 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci --prefix laimpost.com
+    build:
+      commands:
+        - npm run build --prefix laimpost.com
+  artifacts:
+    baseDirectory: laimpost.com/.next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - laimpost.com/node_modules/**/*
