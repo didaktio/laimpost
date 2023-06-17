@@ -146,7 +146,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: 'upload'
           app_location: '/laimpost.com'
-          app_build_command: npm run build:azure
+          app_build_command: npm run build:standalone
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}

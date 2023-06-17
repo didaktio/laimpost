@@ -6,9 +6,9 @@ frontend:
         - npm ci --prefix laimpost.com
     build:
       commands:
-        - npm run build --prefix laimpost.com
+        - npm run build:standalone --prefix laimpost.com
   artifacts:
-    baseDirectory: laimpost.com/.next
+    baseDirectory: laimpost.com/.next/standalone
     files:
       - '**/*'
   cache:
