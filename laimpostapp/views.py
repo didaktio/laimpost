@@ -50,8 +50,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def revalidate_cache(self):
         url = os.environ.get("DJANGO_LAIMPOSTCOM_CACHE_REVALIDATE_URL")
-        requests.get(url, params={"tag": "articles"})
-        requests.get(url, params={"tag": self.get_object().slug})
+        requests.get(url, params={"t": "articles"})
+        requests.get(url, params={"t": self.get_object().slug})
 
 
 class CommentViewSet(viewsets.ModelViewSet):

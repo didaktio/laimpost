@@ -23,6 +23,7 @@ jobs:
         with:
           python-version: 3.12
           allow-prereleases: true
+
       - name: Check deployment(s) requirement
         id: check
         env:
@@ -148,6 +149,7 @@ jobs:
           # deployment_environment: ${{github.ref == 'refs/heads/main' && 'Production' || 'dev'}}
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
 
   create_version:
     needs: [deploy_api, prepare_and_deploy_app]
