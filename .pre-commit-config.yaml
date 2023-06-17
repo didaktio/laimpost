@@ -16,27 +16,27 @@ repos:
   hooks:
     - id: format-be
       name: format django app
-      entry: ./scripts/be_format.py
+      entry: .github/scripts/be_format.py
       language: python
 
     # - id: lint-be
     #   name: lint django app
-    #   entry: ./scripts/be_lint.py
+    #   entry: .github/scripts/be_lint.py
     #   language: python
 
     - id: format-fe
       name: format react app
-      entry: ./scripts/fe_format.py
+      entry: .github/scripts/fe_format.py
       language: python
 
-    # - id: fe lint
-    #   name: lint react app
-    #   entry: ./.githooks/pre_commit_fe_lint.py
-    #   language: python
+    - id: fe lint
+      name: lint react app
+      entry: .github/scripts/fe_lint.py
+      language: python
 
     # - id: fe-test
     #   name: test react app
-    #   entry: ./.githooks/pre_commit_fe_test.py
+    #   entry: .github/scripts/pre_commit_fe_test.py
     #   language: python
     #   stages:
     #     - pre-push

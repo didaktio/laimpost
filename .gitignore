@@ -6,4 +6,4 @@ local
 .github/.act
 bin
 component_changes.txt
-changed_files.txt
+commit_info.txt

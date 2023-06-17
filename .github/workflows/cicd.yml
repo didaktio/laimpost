@@ -23,20 +23,20 @@ jobs:
         with:
           python-version: 3.12
           allow-prereleases: true
-      - name: Check if deployment is required
+      - name: Check deployment(s) requirement
         id: check
+        env:
+          COMMIT_INFO_FILE: commit_info.txt
+          COMPONENT_CHANGES_FILE: component_changes.txt
         run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.event.after }} >> changed_files.txt
-          cat changed_files.txt
-          echo "-------"
-          python .github/scripts/check_deploy_reqs.py &&
-          grep -q "API_CHANGED=True" component_changes.txt && echo "api=true" >> "$GITHUB_OUTPUT" || echo "api=''" >> "$GITHUB_OUTPUT"
-          grep -q "APP_CHANGED=True" component_changes.txt && echo "app=true" >> "$GITHUB_OUTPUT" || echo "app=''" >> "$GITHUB_OUTPUT"
-          grep -q "CICD_CHANGED=True" component_changes.txt && echo "cicd=true" >> "$GITHUB_OUTPUT" || echo "cicd=''" >> "$GITHUB_OUTPUT"
+          (git log -1 --oneline && git diff --name-only ${{ github.event.before }} ${{ github.event.after }}) >> "$COMMIT_INFO_FILE"
+          python .github/scripts/check_deploy_reqs.py "$COMMIT_INFO_FILE" "$COMPONENT_CHANGES_FILE" &&
+          grep -q -e "API=True\|CICD=True\|FORCE=True" "$COMPONENT_CHANGES_FILE" && echo "api=true" >> "$GITHUB_OUTPUT"
+          grep -q -e "APP=True\|CICD=True\|FORCE=True" "$COMPONENT_CHANGES_FILE" && echo "app=true" >> "$GITHUB_OUTPUT"
 
   prepare_api:
     needs: check_deploy_reqs
-    if: ${{needs.check_deploy_reqs.outputs.api == 'true' || needs.check_deploy_reqs.outputs.cicd == 'true' }}
+    if: ${{needs.check_deploy_reqs.outputs.api }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -95,7 +95,7 @@ jobs:
 
   prepare_and_deploy_app:
     needs: check_deploy_reqs
-    if: ${{needs.check_deploy_reqs.outputs.app == 'true' || needs.check_deploy_reqs.outputs.cicd == 'true' }}
+    if: ${{needs.check_deploy_reqs.outputs.app }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -127,8 +127,8 @@ jobs:
       - name: Check formatting
         run: npm run format:check --prefix laimpost.com
 
-      # - name: Run linter
-      #   run:  npm run lint:check install --prefix laimpost.com
+      - name: Run linter
+        run: npm run lint:check --prefix laimpost.com
 
       # - name: Run Unit Tests
       #   run:  npm run test install --prefix laimpost.com
