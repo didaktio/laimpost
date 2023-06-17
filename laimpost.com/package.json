@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "next dev",
-    "build": "next build && cp -a .next/static .next/standalone/.next",
+    "build": "next build",
+    "build:azure": "next build && cp -a .next/static .next/standalone/.next",
     "start": "next start",
     "lint": "eslint --config .eslintrc.json --cache --fix --ext .ts,.tsx,.js app/",
     "lint:check": "eslint --config .eslintrc.json --cache --ext .ts,.tsx,.js app/",
