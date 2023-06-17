@@ -150,6 +150,7 @@ jobs:
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
+          CLOUD_PROVIDER: 'AZURE'
 
   create_version:
     needs: [deploy_api, prepare_and_deploy_app]

@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  ...(process.env.CLOUD_PROVIDER === 'AZURE'
+    ? {
+        output: 'standalone',
+      }
+    : false),
   reactStrictMode: true,
   images: {
     remotePatterns: [
