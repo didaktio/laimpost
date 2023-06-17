@@ -134,12 +134,19 @@ jobs:
       # - name: Run Unit Tests
       #   run:  npm run test install --prefix laimpost.com
 
-      # - name: Build
-      #   run: npm run build --prefix laimpost.com
-      #   env:
-      #     API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      - name: Build
+        run: npm run build --prefix laimpost.com
 
-      - name: Deploy
+      - name: Deploy to GCP (Firebase)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LAIMPOST }}'
+          channelId: live
+          projectId: laimpost
+
+
+      - name: Deploy to Azure
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
