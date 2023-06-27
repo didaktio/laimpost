@@ -7,7 +7,7 @@ applications:
             - npm ci
         build:
           commands:
-            - env | grep -e API_BASE_URL -e API_ALLOWED_ORIGIN >> .env.production
+            - env | grep -e API_BASE_URL -e API_ALLOWED_ORIGIN -e __NEXT_PRIVATE_PREBUNDLED_REACT >> .env.production
             - npm run build
       artifacts:
         baseDirectory: .next
