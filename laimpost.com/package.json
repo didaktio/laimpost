@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "next dev",
     "build": "next build",
-    "build:standalone": "next build && cp -a .next/static .next/standalone/.next",
+    "build:standalone": "NEXT_OUTPUT=standalone next build && cp -a .next/static .next/standalone/.next",
     "start": "next start",
     "lint": "eslint --config .eslintrc.json --cache --fix --ext .ts,.tsx,.js app/",
     "lint:check": "eslint --config .eslintrc.json --cache --ext .ts,.tsx,.js app/",
