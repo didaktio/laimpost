@@ -149,6 +149,8 @@ jobs:
           projectId: laimpost
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
         continue-on-error: true
 
       - name: Deploy to Azure

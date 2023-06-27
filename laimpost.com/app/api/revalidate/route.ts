@@ -8,6 +8,14 @@ const baseHeaders = {
 };
 
 export async function GET(request: NextRequest) {
+  const origin = request.headers.get('origin');
+
+  if (new RegExp('/api/*').test(request.url) && (!origin || origin !== API_ALLOWED_ORIGIN))
+    return new NextResponse(null, {
+      status: 403,
+      statusText: 'Forbidden',
+    });
+
   if ((await revalidateLimiter.removeTokens(1)) < 0)
     return NextResponse.json(
       { error: 'Too many requests.' },
