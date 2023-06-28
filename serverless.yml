@@ -1,0 +1,35 @@
+service: laimpost
+
+plugins:
+  - serverless-wsgi
+  - serverless-dotenv-plugin
+
+custom:
+  wsgi:
+    app: laimpost.wsgi.application
+    pythonBin: python
+    packRequirements: false
+
+
+provider:
+  name: aws
+  region: eu-west-2
+  runtime: python3.10
+  stage: production
+  environment:
+    DJANGO_CLOUD: aws
+  vpc:
+    securityGroupIds:
+      - ${env:AWS_VPC_SECURITY_GROUP_ID, ''}
+    subnetIds:
+      - ${env:AWS_VPC_SUBNET_ID_1, ''}
+      - ${env:AWS_VPC_SUBNET_ID_2, ''}
+      - ${env:AWS_VPC_SUBNET_ID_3, ''}
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+

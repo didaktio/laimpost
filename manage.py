@@ -5,13 +5,14 @@ import sys
 
 from dotenv import load_dotenv
 
-
 def main():
-    if "WEBSITE_HOSTNAME" in os.environ:
+    if "DJANGO_STAGE" in os.environ and os.environ["DJANGO_STAGE"] != "dev":
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.production")
+        print("Production!")
     else:
         load_dotenv()
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.base")
+        print("Development!")
 
     try:
         from django.core.management import execute_from_command_line

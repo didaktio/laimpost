@@ -18,6 +18,7 @@ CORS_ALLOWED_ORIGINS = [
     *filter(bool, os.environ["DJANGO_CORS_ALLOWED_ORIGINS"].split(","))
 ]
 
+
 INSTALLED_APPS = [
     "laimpostapp",
     "django.contrib.admin",
@@ -41,18 +42,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'laimpost',
-#         'USER': 'laim_user_django',
-#         # 'USER': 'postgres',
-#         'PASSWORD': 'tvfXwQR8tcd5yRVS',
-#         # 'PASSWORD': 'qNW72ieRop3uE6KK',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
 
 DATABASES = {
     "default": {
@@ -61,6 +50,7 @@ DATABASES = {
         "HOST": os.environ.get("DB_HOST"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASS"),
+        "PORT": os.environ.get("DB_PORT"),
     }
 }
 
