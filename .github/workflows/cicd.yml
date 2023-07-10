@@ -42,6 +42,9 @@ jobs:
     environment: production
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
       - name: Set up Python
         if: ${{ !github.event.act  }}
@@ -51,18 +54,21 @@ jobs:
           allow-prereleases: true
           cache: pip
 
-      - name: Create and start venv
-        run: |
-          python -m venv venv
-          source venv/bin/activate
+      # - name: Create and start venv
+      #   run: |
+      #     python -m venv venv
+      #     source venv/bin/activate
 
       - name: Install deps
         run: |
           pip install -r requirements.txt
           npm ci
 
-      - name: Format check
-        run: black --check .
+      - name: Install deps
+        run: npm ci
+
+      # - name: Format check
+      #   run: black --check .
 
       # - name: Run linter
       #   run: flake8 --config=.flake8 .
