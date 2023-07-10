@@ -35,7 +35,7 @@ jobs:
           grep -q -e "API=True\|CICD=True\|FORCE=True" "$COMPONENT_CHANGES_FILE" && echo "api=true" >> "$GITHUB_OUTPUT"
           grep -q -e "APP=True\|CICD=True\|FORCE=True" "$COMPONENT_CHANGES_FILE" && echo "app=true" >> "$GITHUB_OUTPUT"
 
-  prepare_api:
+  deploy_api:
     needs: check_deploy_reqs
     if: ${{needs.check_deploy_reqs.outputs.api }}
     runs-on: ubuntu-latest
@@ -64,45 +64,39 @@ jobs:
       # - name: Run linter
       #   run: flake8 --config=.flake8 .
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: |
-            .
-            !venv/
-
-  deploy_api:
-    needs: prepare_api
-    runs-on: ubuntu-latest
-    environment:
-      name: Production
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: python-app
-          path: .
-
       - name: Deploy
-        uses: azure/webapps-deploy@v2
-        id: deploy-to-webapp
-        with:
-          app-name: laimpost3
-          slot-name: Production
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_104C845506804B03BD2C008C8E1D19AB }}
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+          DJANGO_CSRF_TRUSTED_ORIGINS: ${{ secrets.DJANGO_CSRF_TRUSTED_ORIGINS }}
+          DJANGO_CORS_ALLOWED_ORIGINS: ${{ secrets.DJANGO_CORS_ALLOWED_ORIGINS }}
+          DB_NAME: ${{ secrets.DB_NAME}}
+          DB_HOST: ${{ secrets.DB_HOST}}
+          DB_PORT: ${{ secrets.DB_PORT}}
+          DB_USER: ${{ secrets.DB_USER}}
+          DB_PASS: ${{ secrets.DB_PASS}}
+          AWS_VPC_SECURITY_GROUP_ID: ${{ secrets.AWS_VPC_SECURITY_GROUP_ID }}
+          AWS_VPC_SUBNET_ID_1: ${{ secrets.AWS_VPC_SUBNET_ID_1 }}
+          AWS_S3_REGION_NAME: ${{ secrets.AWS_S3_REGION_NAME }}
+          AWS_S3_CDN_DOMAIN: ${{ secrets.AWS_S3_CDN_DOMAIN }}
+          AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+          AWS_DEPLOYMENT_BUCKET: ${{ secrets.AWS_DEPLOYMENT_BUCKET }}
+          AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+          AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+        run: sls deploy -s production --conceal
 
-  prepare_and_deploy_app:
+  deploy_app:
     needs: check_deploy_reqs
     if: ${{needs.check_deploy_reqs.outputs.app }}
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Cache node modules
         id: cache-npm
@@ -140,36 +134,21 @@ jobs:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
 
-      - name: Deploy to GCP (Firebase)
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LAIMPOST }}'
-          channelId: live
-          projectId: laimpost
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
-        continue-on-error: true
+          role-to-assume: arn:aws:iam::750566351359:role/github-actions
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy to Azure
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: 'upload'
-          app_location: '/laimpost.com'
-          app_build_command: npm run build:standalone
+      - name: Deploy to Amplify
         env:
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
-          NEXT_OUTPUT: 'standalone'
-        continue-on-error: true
-
+          APP_ID: ${{ secrets.AWS_APP_ID }}
+        run: |
+          amplify configure --usage-data-off
+          echo '{}' | amplify init --appId $APP_ID --yes
 
   create_version:
-    needs: [deploy_api, prepare_and_deploy_app]
+    needs: [deploy_api, deploy_app]
     if: github.ref == 'refs/heads/main' && !github.event.act
     runs-on: ubuntu-latest
     steps:
@@ -196,7 +175,7 @@ jobs:
         run: git push origin ${{ steps.create-tag.outputs.version }}
 
   check_pull_request:
-    needs: [deploy_api, prepare_and_deploy_app]
+    needs: [deploy_api, deploy_app]
     if: github.ref == 'refs/heads/dev' && !github.event.act
     runs-on: ubuntu-latest
     steps:

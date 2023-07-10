@@ -1,26 +1,27 @@
 {% extends "rest_framework/base.html" %}
+{% load static %}
 
 {% block style %}
 <link
   rel="stylesheet"
   type="text/css"
-  href="/static/rest_framework/css/bootstrap.min.css"
+  href="{% static 'rest_framework/css/bootstrap.min.css' %}"
 />
 <link
   rel="stylesheet"
   type="text/css"
-  href="/static/rest_framework/css/bootstrap-tweaks.css"
+  href="{% static 'rest_framework/css/bootstrap-tweaks.css' %}"
 />
 
 <link
   rel="stylesheet"
   type="text/css"
-  href="/static/rest_framework/css/prettify.css"
+  href="{% static 'rest_framework/css/prettify.css' %}"
 />
 <link
   rel="stylesheet"
   type="text/css"
-  href="/static/rest_framework/css/default.css"
+  href="{% static 'rest_framework/css/default.css' %}"
 />
-<link rel="stylesheet" href="/static/api.css" type="text/css" />
+<link rel="stylesheet" href="{% static 'api.css' %}" type="text/css" />
 {% endblock %}

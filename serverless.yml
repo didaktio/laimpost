@@ -1,35 +1,76 @@
 service: laimpost
 
+useDotenv: true
+
 plugins:
   - serverless-wsgi
+  - serverless-python-requirements
   - serverless-dotenv-plugin
-
+  - serverless-prune-plugin
+  - serverless-scriptable-plugin
 custom:
+  dotenv:
+    logging: false
   wsgi:
     app: laimpost.wsgi.application
-    pythonBin: python
     packRequirements: false
-
+  pythonRequirements:
+    dockerizePip: non-linux
+    zip: true
+    fileName: requirements.txt
+    # slim: true
+    noDeploy:
+      - mypy
+      - pre_commit
+      - flake8
+      - black
+  prune:
+    automatic: true
+    number: 3
+  # scriptable:
+  #   hooks:
+  #     before:package:createDeploymentArtifacts: python manage.py collectstatic
 
 provider:
   name: aws
   region: eu-west-2
   runtime: python3.10
-  stage: production
+  versionFunctions: false
+  timeout: 60
   environment:
     DJANGO_CLOUD: aws
+    STAGE: ${sls:stage}
   vpc:
     securityGroupIds:
-      - ${env:AWS_VPC_SECURITY_GROUP_ID, ''}
+      - ${env:AWS_VPC_SECURITY_GROUP_ID}
     subnetIds:
-      - ${env:AWS_VPC_SUBNET_ID_1, ''}
-      - ${env:AWS_VPC_SUBNET_ID_2, ''}
-      - ${env:AWS_VPC_SUBNET_ID_3, ''}
+      - ${env:AWS_VPC_SUBNET_ID_1}
+  deploymentBucket:
+    name: ${env:AWS_DEPLOYMENT_BUCKET}
+  tracing:
+    lambda: true
 
 functions:
   app:
     handler: wsgi_handler.handler
     events:
-      - http: ANY /
-      - http: 'ANY {proxy+}'
+        - http: ANY /
+        - http: ANY /{proxy+}
+    timeout: 30
 
+package:
+  individually: true
+  exclude:
+    - '**/.*'
+    - '**/*.yml'
+    - '**/*.txt'
+    - '**/*.md'
+    - 'node_modules/**'
+    - 'laimpost.com/**'
+    - 'package-lock.json'
+    - 'package.json'
+    - 'serverless.yml'
+    - 'bin'
+    - 'firebase.json'
+    - 'run.py'
+    - static/**

@@ -1,18 +1,15 @@
 import os
 from .base import *
-from .base import BASE_DIR
+
+DEBUG = True
 
 ALLOWED_HOSTS = [
     *filter(bool, os.environ["DJANGO_ALLOWED_HOSTS"].split(",")),
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -21,28 +18,48 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 
-if "DJANGO_CLOUD" in os.environ and os.environ["DJANGO_CLOUD"] == "azure":
-    conn_str = os.environ["AZURE_POSTGRESQL_CONNECTIONSTRING"]
-    conn_str_params = {
-        pair.split("=")[0]: pair.split("=")[1] for pair in conn_str.split(" ")
-    }
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=False)
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
+    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
+)
+SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=True)
+SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
+    "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", default=True
+)
 
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": conn_str_params["dbname"],
-            "HOST": conn_str_params["host"],
-            "USER": conn_str_params["user"],
-            "PASSWORD": conn_str_params["password"],
-            "PORT": conn_str_params["port"],
-            "OPTIONS": {"sslmode": "require"},
-        }
-    }
+STORAGES = {
+    "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
+    "staticfiles": {"BACKEND": "storages.backends.s3boto3.S3StaticStorage"},
+}
+AWS_ACCESS_KEY_ID = env("AWS_S3_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET")
+AWS_QUERYSTRING_AUTH = False
+aws_expiry = 60 * 60 * 24 * 7
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": f"max-age={aws_expiry}, s-maxage={aws_expiry}, must-revalidate"
+}
+AWS_S3_REGION_NAME = env("AWS_S3_REGION", default=None)
+AWS_S3_CUSTOM_DOMAIN = env("AWS_CDN_DOMAIN", default=None)
+# INSTALLED_APPS.insert(INSTALLED_APPS.index("django.contrib.staticfiles"), "collectfast")
+# COLLECTFAST_STRATEGY = "collectfast.strategies.boto3.Boto3Strategy"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
-    ALLOWED_HOSTS = [os.environ["WEBSITE_HOSTNAME"]]
-
-    CSRF_TRUSTED_ORIGINS = [
-        f"https://{os.environ['WEBSITE_HOSTNAME']}",
-        *filter(bool, os.environ["DJANGO_CORS_ALLOWED_ORIGINS"].split(",")),
-    ]
+TEMPLATES[-1]["OPTIONS"]["loaders"] = [
+    (
+        "django.template.loaders.cached.Loader",
+        [
+            "django.template.loaders.filesystem.Loader",
+            "django.template.loaders.app_directories.Loader",
+        ],
+    )
+]
+# TEMPLATES[-1]["APP_DIRS"] = False

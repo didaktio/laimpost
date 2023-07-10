@@ -3,15 +3,13 @@
 import os
 import sys
 
-from dotenv import load_dotenv
 
 def main():
-    if "DJANGO_STAGE" in os.environ and os.environ["DJANGO_STAGE"] != "dev":
+    if "STAGE" in os.environ and os.environ["STAGE"] != "dev":
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.production")
         print("Production!")
     else:
-        load_dotenv()
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.base")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "laimpost.settings.development")
         print("Development!")
 
     try:

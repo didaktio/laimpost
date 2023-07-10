@@ -42,7 +42,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         response = super().partial_update(request, *args, **kwargs)
-        print("HEREEEE", response.status_code)
         if response.status_code == 200:
             self.revalidate_cache()
 
@@ -50,8 +49,16 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     def revalidate_cache(self):
         url = os.environ.get("DJANGO_LAIMPOSTCOM_CACHE_REVALIDATE_URL")
-        requests.get(url, params={"t": "articles"})
-        requests.get(url, params={"t": self.get_object().slug})
+        try:
+            requests.get(url, params={"t": "articles"})
+        except Exception as e:
+            print(f"Cache revalidation error for 'articles': {str(e)}")
+
+        if self.request.method != "POST":
+            try:
+                requests.get(url, params={"t": self.get_object().slug})
+            except Exception as e:
+                print(f"Cache revalidation error for {self.get_object().slu}: {str(e)}")
 
 
 class CommentViewSet(viewsets.ModelViewSet):

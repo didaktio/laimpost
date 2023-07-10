@@ -2,10 +2,12 @@
 .vscode
 .env*
 **/__pycache__/
-local
+.local
 .github/.act
 bin
 component_changes.txt
 commit_info.txt
-.firebase/**/_next/
 **/node_modules/
+.requirements.zip
+staticfiles
+.serverless
