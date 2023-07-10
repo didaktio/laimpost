@@ -147,7 +147,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::750566351359:role/github-actions
+          role-to-assume: arn:aws:iam::750566351359:role/gh-actions
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to Amplify
