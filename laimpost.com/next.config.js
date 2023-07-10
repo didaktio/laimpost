@@ -10,7 +10,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'laimgroupbc20.blob.core.windows.net',
+        hostname: 'd29zsecmza10zv.cloudfront.net',
       },
     ],
   },

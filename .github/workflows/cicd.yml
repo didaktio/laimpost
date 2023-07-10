@@ -39,6 +39,7 @@ jobs:
     needs: check_deploy_reqs
     if: ${{needs.check_deploy_reqs.outputs.api }}
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v3
 
@@ -56,7 +57,9 @@ jobs:
           source venv/bin/activate
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          npm ci
 
       - name: Format check
         run: black --check .
@@ -89,6 +92,7 @@ jobs:
     needs: check_deploy_reqs
     if: ${{needs.check_deploy_reqs.outputs.app }}
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       id-token: write
       contents: read
@@ -128,11 +132,11 @@ jobs:
       # - name: Run Unit Tests
       #   run:  npm run test install --prefix laimpost.com
 
-      - name: Build
-        run: npm run build --prefix laimpost.com
-        env:
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
+      # - name: Build
+      #   run: npm run build --prefix laimpost.com
+      #   env:
+      #     API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      #     API_ALLOWED_ORIGIN: ${{ secrets.API_ALLOWED_ORIGIN }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
