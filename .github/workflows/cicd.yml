@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev
+      # - dev
 
 jobs:
   check_deploy_reqs:
@@ -140,12 +140,10 @@ jobs:
           role-to-assume: arn:aws:iam::750566351359:role/github-actions
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # - name: Deploy to Amplify
-      #   env:
-      #     APP_ID: ${{ secrets.AWS_APP_ID }}
-      #   run: |
-      #     amplify configure --usage-data-off
-      #     echo '{}' | amplify init --appId $APP_ID --yes
+      - name: Deploy to Amplify
+        env:
+          APP_ID: ${{ secrets.AWS_APP_ID }}
+        run: aws amplify start-job --app-id $APP_ID --branch-name main --job-type RELEASE
 
   create_version:
     needs: [deploy_api, deploy_app]
